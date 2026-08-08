@@ -6,7 +6,7 @@
 
 
 ## Проверка сборки на вирусы
-- [Kaspersky](https://i.imgur.com/Lssas02.pn)
+- [Kaspersky](https://i.imgur.com/Lssas02.png)
 - [VirusTotal](https://www.virustotal.com/gui/file/891c8ea3dcac4093e5ba44375d778ee9b49054146251491dc76c621f34c499a6)
 - [DrWeb](https://online834.drweb.com/cache/?i=ad039a20fd536fbeb83695982532e20d)
 - [2ip](https://i.imgur.com/QktYIsz.png)
