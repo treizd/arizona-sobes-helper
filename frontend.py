@@ -249,7 +249,7 @@ def start():
 
     style.configure(
         "TEntry",
-        foreground=text_color,
+        foreground="black",
         padding=7,
         borderwidth=1,
         relief="flat"
@@ -435,6 +435,7 @@ def sobes_creation_page():
         form,
         text="Ники участников (каждый с новой строки):"
     ).pack(anchor="w", pady=(0, 3))
+
 
     nicks_entry = scrolledtext.ScrolledText(
         form,
@@ -1442,6 +1443,16 @@ def open_github():
     webbrowser.open(GITHUB_LINK, new=2)
 
 
+def CopyPaste(e):
+    if e.keycode == 86 and e.keysym != 'v':
+        e.widget.event_generate('<<Paste>>')
+    elif e.keycode == 67 and e.keysym != 'c':
+        e.widget.event_generate('<<Copy>>')
+    elif e.keycode == 88 and e.keysym != 'x':
+        e.widget.event_generate('<<Cut>>')
+
+
 start()
 main_page()
+root.bind("<Control-Key>", CopyPaste)
 root.mainloop()

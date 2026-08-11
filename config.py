@@ -8,9 +8,8 @@ APP_NAME = "SobesHelper"
 SHORT_DESCRIPTION = "Помощник для проведения собеседований"
 AUTHOR = "Satoshi White"
 AUTHOR_CONTACTS = {"discord": "devmalware", "telegram": "@coder_kiddo"}
-VERSION = "1.2.0"
+VERSION = "1.2.1"
 GITHUB_LINK = "https://github.com/treizd/arizona-sobes-helper"
-PACKAGES = ["matplotlib"]
 
 
 
