@@ -2,14 +2,15 @@ import sys
 import os
 
 
-
 # ================================= SCRIPT INFO =================================
 
 APP_NAME = "SobesHelper"
 SHORT_DESCRIPTION = "Помощник для проведения собеседований"
 AUTHOR = "Satoshi White"
 AUTHOR_CONTACTS = {"discord": "devmalware", "telegram": "@coder_kiddo"}
-VERSION = "1.1.0"
+VERSION = "1.2.0"
+GITHUB_LINK = "https://github.com/treizd/arizona-sobes-helper"
+PACKAGES = ["matplotlib"]
 
 
 
@@ -31,6 +32,7 @@ def get_app_dir() -> str:
 
 BASE_PATH = get_base_dir()
 HISTORY_PATH = os.path.join(BASE_PATH, "journal")
+CONFIG_PATH = os.path.join(BASE_PATH, "config.json")
 DESKTOP_PATH = os.path.join(os.path.expanduser("~"), "Desktop")
 os.makedirs(HISTORY_PATH, exist_ok=True)
 
@@ -147,24 +149,53 @@ SERVER = "Brainburg" # если переделываете скрипт, мож�
 
 # ================================= COLORS =================================
 
-APP_BACKGROUND = "#F3F4F6" # [NOTE] Добавить смену темы
+APP_BACKGROUND_LIGHT = "#F3F4F6" 
+APP_BACKGROUND_DARK = "#707070"
 
-BLUE = "#3B82F6"
-BLUE_HOVER = "#2563EB"
+TEXT_COLOR_LIGHT = "#000000"
+TEXT_COLOR_DARK = "#FFFFFF"
 
-GREEN = "#22C55E"
-GREEN_HOVER = "#16A34A"
+BLUE = "#6E87FF"
+BLUE_HOVER = "#4A65E0"
 
-YELLOW = "#EAB308"
-YELLOW_HOVER = "#CA8A04"
+GREEN = "#57E67B"
+GREEN_HOVER = "#42AD57"
 
-RED = "#EF4444"
-RED_HOVER = "#DC2626"
+YELLOW = "#E6DE45"
+YELLOW_HOVER = "#CCC343"
 
-GRAY = "#6B7280"
-GRAY_HOVER = "#4B5563"
+RED = "#CC4543"
+RED_HOVER = "#A13635"
+
+GRAY = "#A8A8A8"
+GRAY_HOVER = "#9C9C9C"
 
 
 
-# ================================= PHRASES =================================
-# Nothing here yet
+# ================================= OTHER =================================
+
+JSON_BASE = {"theme": "light", "font": "Arial"}
+
+LICENSE = f"""MIT License
+
+Copyright (c) 2026 treizd
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE."""
+
+SBORKA = f"python -m nuitka --standalone --onefile --enable-plugin=tk-inter --enable-plugin=matplotlib --windows-icon-from-ico=icon.ico --windows-product-name=\"Sobes Helper\" --windows-company-name=\"Satoshi White\" --windows-file-version=\"{VERSION}.0\" --windows-product-version=\"{VERSION}.0\" --windows-file-description=\"Помощник для проведения собеседований Arizona RP\" --windows-console-mode=disable --include-module=backend --include-module=config --include-package=matplotlib --include-package=matplotlib.font_manager --include-package=numpy --include-package=kiwisolver --include-package=pyparsing --include-package=cycler frontend.py --output-filename=SobesHelper.exe"

@@ -1,12 +1,13 @@
-# Backend: treizd
-
 import os
+import pip
 import json
 import random
 import string
 import datetime
+import matplotlib.font_manager as fm
+import importlib.util as iu
 
-from config import HISTORY_PATH, JOBS
+from config import HISTORY_PATH, JOBS, CONFIG_PATH, JSON_BASE, PACKAGES
 
 
 
@@ -138,6 +139,20 @@ def save_data(
         json.dump(data, file, ensure_ascii=False, indent=4)
 
 
+def load_config() -> dict:
+    if not os.path.exists(CONFIG_PATH):
+        print("Could not find config.json")
+        with open(CONFIG_PATH, "w", encoding="utf-8") as file:
+            json.dump(JSON_BASE, file)
+
+        return JSON_BASE
+
+    with open(CONFIG_PATH, "r", encoding="utf-8") as file:
+        config = json.load(file)
+
+    return config
+
+
 
 # ================================= OTHER =================================
 
@@ -174,3 +189,25 @@ def get_sorted_participants(
     )
 
 
+def change_theme(
+        new_theme: str
+        ) -> None:
+    config = load_config()
+    config["theme"] = new_theme
+
+    with open(CONFIG_PATH, "w") as file:
+        json.dump(config, file)
+
+def change_font(
+        target_font: str
+        ) -> None:
+    config = load_config()
+    config["font"] = target_font
+
+    with open(CONFIG_PATH, "w") as file:
+        json.dump(config, file)
+
+
+def get_available_fonts() -> list:
+    font_names = fm.get_font_names() # пути к шрифтам: font_paths = fm.findSystemFonts()
+    return sorted(font_names)

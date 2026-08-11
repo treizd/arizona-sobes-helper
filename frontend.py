@@ -1,8 +1,17 @@
-# Frontend: treizd and his anonymous partner (GUI styling: AI)
+import webbrowser
 import tkinter as tk
 from tkinter import ttk, scrolledtext, filedialog, messagebox
-from config import APP_BACKGROUND, BLUE, BLUE_HOVER, GRAY, GRAY_HOVER, GREEN, GREEN_HOVER, RED, RED_HOVER, YELLOW, YELLOW_HOVER, DESKTOP_PATH, SERVER, JOBS, AUTHOR, AUTHOR_CONTACTS, VERSION, APP_NAME, SHORT_DESCRIPTION
-from backend import load_questions, distribute_questions, create_sobes, load_data, save_data, get_sorted_participants, get_total_points, get_job, get_history_files
+from config import APP_BACKGROUND_LIGHT, APP_BACKGROUND_DARK, BLUE, BLUE_HOVER, GRAY, GRAY_HOVER, GREEN, GREEN_HOVER, RED, RED_HOVER, YELLOW, YELLOW_HOVER, DESKTOP_PATH, SERVER, JOBS, AUTHOR, AUTHOR_CONTACTS, VERSION, APP_NAME, SHORT_DESCRIPTION, TEXT_COLOR_DARK, TEXT_COLOR_LIGHT, JSON_BASE, LICENSE, SBORKA, GITHUB_LINK
+from backend import load_questions, distribute_questions, create_sobes, load_data, save_data, get_sorted_participants, get_total_points, get_job, get_history_files, load_config, change_theme, change_font, get_available_fonts
+
+
+
+# ================================= SETTINGS =================================
+
+settings = load_config()
+bg_color = APP_BACKGROUND_DARK if settings.get("theme", "light") == "dark" else APP_BACKGROUND_LIGHT
+font_family = settings.get("font", "Arial")
+text_color = TEXT_COLOR_DARK if settings.get("theme", "light") == "dark" else TEXT_COLOR_LIGHT
 
 
 
@@ -19,14 +28,14 @@ class RoundedButton(tk.Canvas):
         text_color="white",
         radius=12,
         height=42,
-        width=180,
-        button_font=("Arial", 11, "bold")
+        width=110,
+        button_font=(font_family, 11, "bold"),
     ):
         super().__init__(
             parent,
             width=width,
             height=height,
-            background=APP_BACKGROUND,
+            background=bg_color,
             highlightthickness=0,
             borderwidth=0,
             relief="flat",
@@ -170,7 +179,8 @@ def create_title(
 def create_back_button(
         parent, 
         text, 
-        command
+        command,
+        width_=110
         ):
     button = RoundedButton(
         parent,
@@ -178,22 +188,22 @@ def create_back_button(
         command=command,
         color=GRAY,
         hover_color=GRAY_HOVER,
-        width=170,
+        width=width_,
         height=36,
         radius=10,
-        button_font=("Arial", 10, "bold")
+        button_font=(font_family, 10, "bold")
     )
     button.pack(anchor="nw", padx=10, pady=10)
     return button
 
-# [NOTE] Стилизация от ИИ
+
 def start():
     global root, timer_after
 
     root = tk.Tk()
     root.title(f"{APP_NAME} [v{VERSION}]")
     root.resizable(False, False)
-    root.configure(background=APP_BACKGROUND)
+    root.configure(background=bg_color)
 
     timer_after = None
 
@@ -213,34 +223,33 @@ def start():
 
     style.configure(
         "TFrame",
-        background=APP_BACKGROUND
+        background=bg_color
     )
 
     style.configure(
         "TLabel",
-        background=APP_BACKGROUND,
-        foreground="#111827",
-        font=("Arial", 10)
+        background=bg_color,
+        foreground=text_color,
+        font=(font_family, 10)
     )
 
     style.configure(
         "Title.TLabel",
-        background=APP_BACKGROUND,
-        foreground="#111827",
-        font=("Arial", 24, "bold")
+        background=bg_color,
+        foreground=text_color,
+        font=(font_family, 24, "bold")
     )
 
     style.configure(
         "Subtitle.TLabel",
-        background=APP_BACKGROUND,
-        foreground="#111827",
-        font=("Arial", 14, "bold")
+        background=bg_color,
+        foreground=text_color,
+        font=(font_family, 14, "bold")
     )
 
     style.configure(
         "TEntry",
-        fieldbackground="white",
-        foreground="#111827",
+        foreground=text_color,
         padding=7,
         borderwidth=1,
         relief="flat"
@@ -248,15 +257,13 @@ def start():
 
     style.configure(
         "TCombobox",
-        fieldbackground="white",
-        foreground="#111827",
+        foreground="black",
         padding=6
     )
 
     style.configure(
         "TSpinbox",
-        fieldbackground="white",
-        foreground="#111827",
+        foreground="black",
         padding=5
     )
 
@@ -315,13 +322,14 @@ def main_page():
     frame = ttk.Frame(root)
     frame.pack(fill="both", expand=True)
 
+    create_back_button(frame, "⚙️", settings_page, width_=36)
     create_title(frame)
 
     subtitle = ttk.Label(
         frame,
         text=SHORT_DESCRIPTION,
-        font=("Arial", 11),
-        foreground="#6B7280"
+        font=(font_family, 11),
+        foreground=text_color
     )
     subtitle.pack(pady=(0, 25))
 
@@ -353,8 +361,8 @@ def main_page():
             frame,
             text="🐞 Баги/предложения",
             command=bugs_and_adv,
-            color=YELLOW,
-            hover_color=YELLOW_HOVER,
+            color=GREEN,
+            hover_color=GREEN_HOVER,
             width=280,
             height=48,
             radius=14
@@ -364,8 +372,8 @@ def main_page():
     author_label = ttk.Label(
         frame,
         text=f"© {AUTHOR}", # ток попробуйте поменять автора в конфиге!
-        font=("Arial", 10),
-        foreground="#6B7280"
+        font=(font_family, 10),
+        foreground="#6B7280" if settings.get("theme", "light") == "light" else "#D1D5DB"
     )
     author_label.pack(side="bottom", pady=20)
 
@@ -433,7 +441,7 @@ def sobes_creation_page():
         wrap=tk.WORD,
         width=50,
         height=5,
-        font=("Arial", 10),
+        font=(font_family, 10), # тут надо бы поменять шрифт
         relief="flat",
         borderwidth=1,
         highlightthickness=1,
@@ -454,7 +462,7 @@ def sobes_creation_page():
         width=220,
         height=36,
         radius=10,
-        button_font=("Arial", 10, "bold")
+        button_font=(font_family, 10, "bold")
     )
     file_button.pack(side="left")
 
@@ -540,7 +548,7 @@ def sobes_creation_page():
     )
     start_button.pack(pady=12)
 
-# [NOTE] Валидатор данных тут
+
 def create_sobes_from_form():
     nicknames = [
         nickname.strip()
@@ -652,8 +660,8 @@ def candidates_page(file_path, from_history=False):
 
     candidates_label = ttk.Label(
         frame,
-        text="Кандидаты:",
-        font=("Arial", 11, "bold")
+        text="Кандидаты:",  
+        font=(font_family, 11, "bold")
     )
     candidates_label.pack(pady=5)
 
@@ -787,7 +795,7 @@ def candidate_intro_page(
     greeting_label = ttk.Label(
         frame,
         text=greeting_text,
-        font=("Arial", 13),
+        font=(font_family, 13),
         wraplength=620,
         justify="center"
     )
@@ -796,7 +804,7 @@ def candidate_intro_page(
     wait_label = ttk.Label(
         frame,
         text="ОЖИДАЙТЕ ПРЕДСТАВЛЕНИЯ",
-        font=("Arial", 13, "bold"),
+        font=(font_family, 13, "bold"),
         foreground=RED
     )
     wait_label.pack(pady=12)
@@ -812,7 +820,7 @@ def candidate_intro_page(
     questions_label = ttk.Label(
         frame,
         text=questions_text,
-        font=("Arial", 12),
+        font=(font_family, 12),
         wraplength=620,
         justify="center"
     )
@@ -896,10 +904,9 @@ def question_page(
         ),
         color=GRAY,
         hover_color=GRAY_HOVER,
-        width=170,
         height=36,
         radius=10,
-        button_font=("Arial", 10, "bold")
+        button_font=(font_family, 10, "bold")
     )
     back_button.pack(side="left")
 
@@ -918,10 +925,9 @@ def question_page(
             ),
             color=BLUE,
             hover_color=BLUE_HOVER,
-            width=150,
             height=36,
             radius=10,
-            button_font=("Arial", 10, "bold")
+            button_font=(font_family, 10, "bold")
         )
         intro_button.pack(side="left", padx=8)
 
@@ -944,7 +950,7 @@ def question_page(
     candidate_label = ttk.Label(
         frame,
         text=f"Кандидат: {participant_name}  •  Баллы: {total_points:g}",
-        font=("Arial", 12)
+        font=(font_family, 12)
     )
     candidate_label.pack(pady=5)
 
@@ -971,7 +977,7 @@ def question_page(
     question_number_label = ttk.Label(
         navigation_frame,
         text=f"Вопрос {shown_question} из {len(participant['questions'])}",
-        font=("Arial", 14, "bold")
+        font=(font_family, 14, "bold")
     )
     question_number_label.grid(row=0, column=1, padx=15)
 
@@ -1003,7 +1009,7 @@ def question_page(
     question_label = ttk.Label(
         frame,
         text=question_text,
-        font=("Arial", 15, "bold"),
+        font=(font_family, 15, "bold"),
         wraplength=620,
         justify="center"
     )
@@ -1012,7 +1018,7 @@ def question_page(
     timer_label = ttk.Label(
         frame,
         text="",
-        font=("Arial", 13, "bold"),
+        font=(font_family, 13, "bold"),
         foreground=RED
     )
     timer_label.pack(pady=8)
@@ -1025,7 +1031,7 @@ def question_page(
         result_label = ttk.Label(
             frame,
             text=f"Кандидат получил: {float(question_points[question_key]):g}",
-            font=("Arial", 14, "bold"),
+            font=(font_family, 14, "bold"),
             foreground=GREEN
         )
         result_label.pack(pady=10)
@@ -1034,7 +1040,7 @@ def question_page(
         result_label = ttk.Label(
             frame,
             text="Вопрос не оценен",
-            font=("Arial", 13),
+            font=(font_family, 13),
             foreground="#6B7280"
         )
         result_label.pack(pady=10)
@@ -1043,7 +1049,7 @@ def question_page(
         result_label = ttk.Label(
             frame,
             text="Этот вопрос еще не оценен",
-            font=("Arial", 13),
+            font=(font_family, 13),
             foreground="#6B7280"
         )
         result_label.pack(pady=10)
@@ -1138,7 +1144,7 @@ def start_question_timer(timer_label, seconds_left):
 
     timer_label.config(
         text=f"Осталось: {seconds_left} сек.",
-        foreground=RED if seconds_left <= 5 else "#111827"
+        foreground=RED if seconds_left <= 5 else text_color
     )
 
     timer_after = root.after(
@@ -1243,7 +1249,7 @@ def history_page():
         empty_label = ttk.Label(
             history_frame,
             text="История пуста",
-            font=("Arial", 13),
+            font=(font_family, 13),
             foreground="#6B7280"
         )
         empty_label.pack(pady=40)
@@ -1299,7 +1305,142 @@ def history_page():
 
 
 def bugs_and_adv():
-    tk.messagebox.showinfo("Баги и предложения", f"Если вы нашли баг или у вас есть предложение по улучшению, пожалуйста, свяжитесь с автором:\n{', '.join([i + ': ' + AUTHOR_CONTACTS[i] for i in AUTHOR_CONTACTS])}\n\nВерсия программы: {VERSION}")
+    tk.messagebox.showinfo("Баги и предложения", f"Если вы нашли баг или у вас есть предложение по улучшению, пожалуйста, свяжитесь с автором:\n{', '.join([i + ': ' + AUTHOR_CONTACTS[i] for i in AUTHOR_CONTACTS])}")
+
+def settings_page():
+    clear_page()
+    
+    frame = ttk.Frame(root)
+    frame.pack(fill="both", expand=True)
+
+    create_back_button(
+        frame,
+        "◀ Домой",
+        main_page
+    )
+
+    create_title(
+        frame,
+        "Настройки"
+    )
+
+    settings_frame = ttk.Frame(frame)
+    settings_frame.pack(
+        fill="both",
+        expand=True,
+        padx=35,
+        pady=10
+    )
+
+    ttk.Label(
+        settings_frame,
+        text="Выберите шрифт интерфейса:"
+    ).pack(anchor="w", pady=(0, 3))
+    
+    fonts_box = ttk.Combobox(
+        settings_frame,
+        values=get_available_fonts(),
+        state="readonly"
+    )
+    fonts_box.pack(fill="x", pady=(0, 8))
+    fonts_box.set(font_family)
+
+    ttk.Label(
+            settings_frame,
+            text="Выберите тему:"
+        ).pack(anchor="w", pady=(0, 3))
+
+    themes_box = ttk.Combobox(
+        settings_frame,
+        values=["Светлая", "Темная"],
+        state="readonly"
+    )
+    themes_box.pack(fill="x", pady=(0, 8))
+    themes_box.set("Светлая" if settings.get("theme", "light") == "light" else "Темная")
+
+    save_settings_button = RoundedButton(
+        settings_frame,
+        text="↻ Сохранить настройки",
+        command=lambda: update_settings(fonts_box.get(), themes_box.get()),
+        color=GREEN,
+        hover_color=GREEN_HOVER,
+        width=280,
+        height=48,
+        radius=14
+    )
+    save_settings_button.pack(pady=7)
+
+    reset_settings_button = RoundedButton(
+        settings_frame,
+        text="Сбросить настройки",
+        command=lambda: update_settings(JSON_BASE.get("font", "Arial"), "Светлая" if JSON_BASE.get("theme", "light") == "light" else "Темная", True),
+        color=BLUE,
+        hover_color=BLUE_HOVER,
+        width=280,
+        height=48,
+        radius=14
+    )
+    reset_settings_button.pack(pady=7)
+
+    about_script = RoundedButton(
+        settings_frame,
+        text="О программе",
+        command=show_info,
+        color=RED,
+        hover_color=RED_HOVER,
+        width=200,
+        height=30,
+        radius=14
+    )
+    about_script.pack(pady=7)
+
+    source_link = RoundedButton(
+        settings_frame,
+        text="Исходный код",
+        command=open_github,
+        color=GRAY,
+        hover_color=GRAY_HOVER,
+        width=200,
+        height=30,
+        radius=14,
+    )
+    source_link.pack()
+
+def update_settings(
+        new_font: str,
+        new_theme: str,
+        _is_reset: bool = False
+        ):
+    global settings, bg_color, font_family, text_color
+
+    old_font = settings.get("font", "Arial")
+    old_theme = "Светлая" if settings.get("theme", "light") == "light" else "Темная"
+
+    change_font(new_font)
+    change_theme("dark" if new_theme == "Темная" else "light")
+
+    settings = load_config()
+    bg_color = APP_BACKGROUND_DARK if settings.get("theme", "light") == "dark" else APP_BACKGROUND_LIGHT
+    font_family = settings.get("font", "Arial")
+    text_color = TEXT_COLOR_DARK if settings.get("theme", "light") == "dark" else TEXT_COLOR_LIGHT
+
+    root.destroy()
+    start()
+    settings_page()
+
+    if not _is_reset:
+        messagebox.showinfo("Сохранение настроек", f"Настройки успешно сохранены!\n{old_font} → {new_font}\n{old_theme} тема → {new_theme} тема")
+    else:
+        messagebox.showinfo("Сброс настроек", f"Настройки успешно сброшены!\n{old_font} → {new_font}\n{old_theme} тема → {new_theme} тема")
+
+
+def show_info():
+    messagebox.showinfo("Информация о программе", f"Название: {APP_NAME}\nВерсия: {VERSION}\nАвтор: {AUTHOR}\n\nЛицензия:\n{LICENSE}\n\n\n{APP_NAME} – {SHORT_DESCRIPTION}\n\nEXE файл собран через nuitka:\n{SBORKA}")
+
+
+def open_github():
+    webbrowser.open(GITHUB_LINK, new=2)
+
 
 start()
 main_page()
